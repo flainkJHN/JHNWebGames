@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logic Truth Table Challenge</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.card{
+    max-width:1100px;
+    margin:auto;
+    background:#1e293bcc;
+    padding:20px;
+    border-radius:15px;
+}
+
+.table{
+    border-collapse:collapse;
+    margin:10px auto;
+}
+
+.table th,
+.table td{
+    border:1px solid white;
+    padding:8px 14px;
+}
+
+.option{
+    display:inline-block;
+    background:#334155;
+    padding:10px;
+    margin:10px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+button{
+    padding:12px 24px;
+    font-size:18px;
+    background:#38bdf8;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+input[type=text]{
+    width:60px;
+    text-align:center;
+    font-size:18px;
+}
+
+#score,#progress{
+    font-size:22px;
+    color:#facc15;
+    font-weight:bold;
+    margin:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>⚡ Logic Truth Table Challenge ⚡</h1>
+
+<div id="progress"></div>
+<div id="score"></div>
+
+<h2 id="title"></h2>
+
+<div id="question"></div>
+
+<button onclick="checkAnswer()">Check Answer</button>
+
+<p id="feedback"></p>
+
+</div>
+
+<script>
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function beep(freq,duration){
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.frequency.value = freq;
+
+    osc.start();
+
+    gain.gain.setValueAtTime(0.2,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioCtx.currentTime + duration/1000
+    );
+
+    osc.stop(audioCtx.currentTime + duration/1000);
+}
+
+const inputs = [
+    [0,0],
+    [0,1],
+    [1,0],
+    [1,1]
+];
+
+const questions = [
+
+{
+    type:"fill",
+    title:"Question 1: AND Gate",
+    headers:["A","B","A AND B"],
+    rows:[
+        [0,0,0],
+        [0,1,0],
+        [1,0,0],
+        [1,1,""]
+    ],
+    answers:["1"]
+},
+
+{
+    type:"choice",
+    title:"Question 2: OR Gate",
+    question:"Choose the correct truth table for A OR B",
+    options:[
+        [0,0,0,1],
+        [0,1,1,1],
+        [1,1,1,1]
+    ],
+    correct:1
+},
+
+{
+    type:"fill",
+    title:"Question 3: NOT Gate",
+    headers:["A","NOT A"],
+    rows:[
+        [0,1],
+        [1,""]
+    ],
+    answers:["0"]
+},
+
+{
+    type:"choice",
+    title:"Question 4: AND Gate",
+    question:"Choose the correct truth table for A AND B",
+    options:[
+        [0,0,0,1],
+        [0,1,1,1],
+        [1,1,1,1]
+    ],
+    correct:0
+},
+
+{
+    type:"fill",
+    title:"Question 5: OR Gate",
+    headers:["A","B","A OR B"],
+    rows:[
+        [0,0,0],
+        [0,1,1],
+        [1,0,""],
+        [1,1,1]
+    ],
+    answers:["1"]
+},
+
+{
+    type:"choice",
+    title:"Question 6: NOT Gate",
+    question:"Choose the correct truth table for NOT A",
+    options:[
+        [1,0],
+        [0,1],
+        [1,1]
+    ],
+    correct:0,
+    notGate:true
+},
+
+{
+    type:"choice",
+    title:"Question 7: (NOT A) AND B",
+    question:"Choose the correct truth table",
+    options:[
+        [0,1,0,0],
+        [0,0,1,0],
+        [1,1,0,0]
+    ],
+    correct:0
+},
+
+{
+    type:"fill",
+    title:"Question 8: A OR (NOT B)",
+    headers:["A","B","Output"],
+    rows:[
+        [0,0,1],
+        [0,1,0],
+        [1,0,""],
+        [1,1,1]
+    ],
+    answers:["1"]
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+let firstTry = true;
+
+function updateDisplay(){
+
+    document.getElementById("progress").innerHTML =
+        `Question ${currentQuestion + 1} of 8`;
+
+    document.getElementById("score").innerHTML =
+        `Score: ${score}/8`;
+}
+
+function renderOption(outputs,index,isNot){
+
+    if(isNot){
+
+        return `
+        <label class="option">
+            <input type="radio" name="answer" value="${index}">
+            <table class="table">
+                <tr>
+                    <th>A</th>
+                    <th>Output</th>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>${outputs[0]}</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>${outputs[1]}</td>
+                </tr>
+            </table>
+        </label>`;
+    }
+
+    return `
+    <label class="option">
+        <input type="radio" name="answer" value="${index}">
+        <table class="table">
+            <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>Output</th>
+            </tr>
+            ${inputs.map((row,i)=>`
+            <tr>
+                <td>${row[0]}</td>
+                <td>${row[1]}</td>
+                <td>${outputs[i]}</td>
+            </tr>`).join("")}
+        </table>
+    </label>`;
+}
+
+function loadQuestion(){
+
+    firstTry = true;
+
+    updateDisplay();
+
+    const q = questions[currentQuestion];
+
+    document.getElementById("title").textContent = q.title;
+    document.getElementById("feedback").textContent = "";
+
+    if(q.type === "fill"){
+
+        let html =
+        `<table class="table">
+        <tr>
+        ${q.headers.map(h=>`<th>${h}</th>`).join("")}
+        </tr>`;
+
+        html += q.rows.map(row=>
+            `<tr>${
+                row.map(cell =>
+                    cell === "" ?
+                    `<td><input type="text"></td>` :
+                    `<td>${cell}</td>`
+                ).join("")
+            }</tr>`
+        ).join("");
+
+        html += "</table>";
+
+        document.getElementById("question").innerHTML = html;
+
+    } else {
+
+        document.getElementById("question").innerHTML =
+            `<p>${q.question}</p>` +
+            q.options.map((o,i)=>
+                renderOption(o,i,q.notGate)
+            ).join("");
+    }
+}
+
+function checkAnswer(){
+
+    const q = questions[currentQuestion];
+
+    let correct = false;
+
+    if(q.type === "fill"){
+
+        correct = true;
+
+        let index = 0;
+
+        document.querySelectorAll('input[type="text"]')
+            .forEach(box => {
+
+                if(box.value.trim() !== q.answers[index++]){
+                    correct = false;
+                }
+            });
+
+    } else {
+
+        const selected =
+            document.querySelector('input[name="answer"]:checked');
+
+        correct =
+            selected &&
+            parseInt(selected.value) === q.correct;
+    }
+
+    if(correct){
+
+        if(firstTry){
+            score++;
+        }
+
+        beep(900,150);
+
+        if(currentQuestion < questions.length - 1){
+
+            currentQuestion++;
+
+            setTimeout(loadQuestion,600);
+
+        } else {
+
+            finishQuiz();
+        }
+
+    } else {
+
+        firstTry = false;
+
+        beep(250,350);
+
+        document.getElementById("feedback").innerHTML =
+            "❌ Incorrect. This question can no longer earn a point.";
+    }
+}
+
+function finishQuiz(){
+
+    const percentage = Math.round(score / 8 * 100);
+
+    document.getElementById("question").innerHTML = `
+        <h2>🏆 Challenge Complete!</h2>
+        <h3>Score: ${score}/8</h3>
+        <h2>${percentage}%</h2>
+    `;
+
+    document.getElementById("progress").innerHTML =
+        "Finished";
+
+    beep(1200,150);
+    setTimeout(()=>beep(1500,150),180);
+    setTimeout(()=>beep(1800,250),360);
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
