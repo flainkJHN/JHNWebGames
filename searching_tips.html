@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Smart Challenge</title>
+<style>
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f172a,#2563eb);color:#fff;margin:0;padding:20px;text-align:center}
+.container{max-width:1000px;margin:auto;background:rgba(255,255,255,.1);padding:25px;border-radius:20px}
+.logo{width:140px;background:#fff;padding:8px;border-radius:10px}
+button.option{display:block;width:100%;margin:10px 0;padding:15px;font-size:18px;border:none;border-radius:10px;cursor:pointer}
+#feedback{margin-top:15px;padding:15px;background:rgba(0,0,0,.25);border-radius:10px}
+#nextBtn{display:none;padding:10px 20px;font-size:18px}
+</style>
+</head>
+<body>
+<div class="container">
+<img src="jhn_logo.jpg" class="logo" alt="School logo">
+<h1>Search Smart Challenge</h1>
+<h2 id="scenario"></h2>
+<div id="options"></div>
+<div id="feedback"></div>
+<button id="nextBtn">Next Question</button>
+</div>
+<script>
+const questions=[
+{scenario:'Find the height of Mount Everest',options:['tell me what the height of mount everest is please','Mount Everest height','mountain facts everest'],correct:1,explanation:'Using keywords only removes unnecessary words.'},
+{scenario:'Find information about the Olympic motto',options:['Olympic motto','"Faster Higher Stronger"','sports slogan'],correct:1,explanation:'Quotation marks search for an exact phrase.'},
+{scenario:'Research jaguars the animal, not the car',options:['jaguar','jaguar NOT car','jaguar vehicle'],correct:1,explanation:'NOT excludes unwanted results.'}
+];
+let current=0,score=0;
+const scenarioEl=document.getElementById('scenario');
+const optionsEl=document.getElementById('options');
+const feedbackEl=document.getElementById('feedback');
+const nextBtn=document.getElementById('nextBtn');
+function loadQuestion(){
+ const q=questions[current];
+ scenarioEl.textContent=q.scenario;
+ optionsEl.innerHTML='';
+ feedbackEl.innerHTML='';
+ nextBtn.style.display='none';
+ q.options.forEach((opt,i)=>{
+  const btn=document.createElement('button');
+  btn.className='option';
+  btn.textContent=opt;
+  btn.onclick=()=>checkAnswer(i);
+  optionsEl.appendChild(btn);
+ });
+}
+function checkAnswer(choice){
+ const q=questions[current];
+ if(choice===q.correct){score++;feedbackEl.innerHTML='✅ Correct!<br><br>'+q.explanation;}
+ else{feedbackEl.innerHTML='❌ Best answer: <b>'+q.options[q.correct]+'</b><br><br>'+q.explanation;}
+ document.querySelectorAll('.option').forEach(b=>b.disabled=true);
+ nextBtn.style.display='inline-block';
+}
+nextBtn.addEventListener('click',()=>{
+ current++;
+ if(current<questions.length){loadQuestion();}
+ else{document.querySelector('.container').innerHTML='<img src="jhn_logo.jpg" class="logo"><h1>Finished!</h1><h2>Score: '+score+' / '+questions.length+'</h2>';}
+});
+loadQuestion();
+</script>
+</body>
+</html>
