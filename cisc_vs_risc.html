@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RISC vs CISC Processor Challenge | Saint John Henry Newman Catholic School</title>
+
+<style>
+:root{
+    --sjhn-navy:#08264a;
+    --sjhn-red:#c62828;
+    --sjhn-gold:#d4af37;
+    --sjhn-light:#f5f7fa;
+    --sjhn-green:#2e7d32;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Segoe UI, Arial, sans-serif;
+    background:var(--sjhn-light);
+    color:#222;
+}
+
+header{
+    background:linear-gradient(135deg,var(--sjhn-navy),#123f78);
+    color:white;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.3);
+}
+
+.logo{
+    width:100px;
+    height:auto;
+    background:white;
+    border-radius:10px;
+    padding:5px;
+}
+
+.header-text h1{
+    margin:0;
+    font-size:2rem;
+}
+
+.header-text p{
+    margin:5px 0 0 0;
+    color:#f0f0f0;
+}
+
+.instructions{
+    max-width:1200px;
+    margin:20px auto;
+    background:white;
+    border-left:8px solid var(--sjhn-gold);
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+main{
+    max-width:1400px;
+    margin:auto;
+    padding:10px;
+}
+
+.game-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.statements-panel{
+    width:320px;
+    min-height:650px;
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.statement-list{
+    min-height:500px;
+}
+
+.category{
+    flex:1;
+    min-width:350px;
+    background:white;
+    border-radius:12px;
+    padding:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.category h2{
+    text-align:center;
+    margin-top:0;
+}
+
+.risc-title{
+    color:var(--sjhn-green);
+}
+
+.cisc-title{
+    color:var(--sjhn-red);
+}
+
+.drop-zone{
+    min-height:500px;
+    border:3px dashed #ccc;
+    border-radius:10px;
+    padding:10px;
+    transition:0.2s;
+}
+
+.drop-zone.drag-over{
+    background:#eef7ff;
+    border-color:var(--sjhn-navy);
+}
+
+.card{
+    background:white;
+    border-left:6px solid var(--sjhn-gold);
+    border-radius:8px;
+    margin:8px 0;
+    padding:12px;
+    cursor:grab;
+    user-select:none;
+    box-shadow:0 1px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover{
+    background:#fffdf5;
+}
+
+.correct{
+    background:#d4edda !important;
+    border-left-color:green !important;
+}
+
+.incorrect{
+    background:#f8d7da !important;
+    border-left-color:red !important;
+}
+
+.controls{
+    text-align:center;
+    margin:20px;
+}
+
+button{
+    background:var(--sjhn-navy);
+    color:white;
+    border:none;
+    padding:12px 22px;
+    margin:5px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:var(--sjhn-red);
+}
+
+#results{
+    text-align:center;
+    font-size:1.4rem;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.progress-container{
+    width:90%;
+    max-width:900px;
+    height:25px;
+    background:#ddd;
+    margin:20px auto;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,var(--sjhn-red),var(--sjhn-gold));
+    transition:0.5s;
+}
+
+.footer{
+    text-align:center;
+    padding:15px;
+    background:var(--sjhn-navy);
+    color:white;
+    margin-top:30px;
+}
+
+@media(max-width:900px){
+    .game-container{
+        flex-direction:column;
+    }
+
+    .statements-panel{
+        width:100%;
+    }
+}
+
+#school_logo{
+
+	width:150px;
+	height:150px;
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="jhn_logo.jpg" id="school_logo"/>
+
+    <div class="header-text">
+        <h1>RISC vs CISC Processor Challenge</h1>
+        <p>Saint John Henry Newman Catholic School</p>
+    </div>
+</header>
+
+<div class="instructions">
+<h3>Instructions</h3>
+<p>
+Drag each statement into either the <strong>RISC</strong> or <strong>CISC</strong> category.
+When you have sorted all the statements, click <strong>Check Answers</strong> to see your score.
+</p>
+</div>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<main>
+
+<div class="game-container">
+
+<div class="statements-panel">
+<h2>Statements to Sort</h2>
+
+<div class="statement-list" id="statementPool">
+
+<div class="card" draggable="true" data-answer="risc">Small and simple instruction set</div>
+<div class="card" draggable="true" data-answer="cisc">Large and complex instruction set</div>
+<div class="card" draggable="true" data-answer="cisc">Some instructions rarely used</div>
+<div class="card" draggable="true" data-answer="risc">Instructions used regularly</div>
+<div class="card" draggable="true" data-answer="risc">Usually completes instructions in a single clock cycle</div>
+<div class="card" draggable="true" data-answer="cisc">Instructions may require multiple clock cycles</div>
+<div class="card" draggable="true" data-answer="risc">More complex compiler required</div>
+<div class="card" draggable="true" data-answer="cisc">Less complex compiler required</div>
+<div class="card" draggable="true" data-answer="risc">Very suitable for pipelining</div>
+<div class="card" draggable="true" data-answer="cisc">Aims for fewer instructions per program</div>
+<div class="card" draggable="true" data-answer="risc">Lower power consumption</div>
+<div class="card" draggable="true" data-answer="cisc">Higher power consumption</div>
+<div class="card" draggable="true" data-answer="risc">Many general-purpose registers</div>
+<div class="card" draggable="true" data-answer="cisc">Fewer registers</div>
+<div class="card" draggable="true" data-answer="risc">Simpler processor design</div>
+<div class="card" draggable="true" data-answer="cisc">More complex processor design</div>
+<div class="card" draggable="true" data-answer="risc">ARM architecture</div>
+<div class="card" draggable="true" data-answer="cisc">x86 architecture</div>
+<div class="card" draggable="true" data-answer="risc">Common in smartphones and tablets</div>
+<div class="card" draggable="true" data-answer="cisc">Common in desktop computers</div>
+<div class="card" draggable="true" data-answer="risc">Often cheaper to manufacture</div>
+<div class="card" draggable="true" data-answer="cisc">Uses more transistors</div>
+<div class="card" draggable="true" data-answer="risc">Fewer addressing modes</div>
+<div class="card" draggable="true" data-answer="cisc">Many complex addressing modes</div>
+<div class="card" draggable="true" data-answer="cisc">Traditional method of processor design</div>
+<div class="card" draggable="true" data-answer="cisc">Would run the same software as desktop machines</div>
+<div class="card" draggable="true" data-answer="risc">Software would need to be rewritten specifically for the processor</div>
+<div class="card" draggable="true" data-answer="risc">Requires less RAM</div>
+<div class="card" draggable="true" data-answer="cisc">Requires more RAM</div>
+</div>
+</div>
+
+<div class="category">
+<h2 class="risc-title">RISC</h2>
+<div class="drop-zone" id="risc"></div>
+</div>
+
+<div class="category">
+<h2 class="cisc-title">CISC</h2>
+<div class="drop-zone" id="cisc"></div>
+</div>
+
+</div>
+
+<div class="controls">
+<button onclick="checkAnswers()">Check Answers</button>
+<button onclick="resetGame()">Reset Activity</button>
+</div>
+
+<div id="results"></div>
+
+</main>
+
+<div class="footer">
+Computer Science Department • Saint John Henry Newman Catholic School
+</div>
+
+<script>
+
+let draggedCard = null;
+
+const cards = document.querySelectorAll('.card');
+const zones = document.querySelectorAll('.drop-zone');
+
+shuffleCards();
+
+cards.forEach(card=>{
+
+    card.addEventListener('dragstart',()=>{
+        draggedCard = card;
+    });
+
+});
+
+zones.forEach(zone=>{
+
+    zone.addEventListener('dragover',(e)=>{
+        e.preventDefault();
+        zone.classList.add('drag-over');
+    });
+
+    zone.addEventListener('dragleave',()=>{
+        zone.classList.remove('drag-over');
+    });
+
+    zone.addEventListener('drop',(e)=>{
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        zone.appendChild(draggedCard);
+        updateProgress();
+    });
+
+});
+
+function checkAnswers(){
+
+    let score = 0;
+    const allCards = document.querySelectorAll('.card');
+
+    allCards.forEach(card=>{
+
+        card.classList.remove('correct');
+        card.classList.remove('incorrect');
+
+        const parentZone = card.parentElement.id;
+
+        if(parentZone === card.dataset.answer){
+            card.classList.add('correct');
+            score++;
+        } else {
+            card.classList.add('incorrect');
+        }
+
+    });
+
+    let percentage = Math.round((score/allCards.length)*100);
+
+    let feedback = "";
+
+    if(percentage === 100){
+        feedback = "🏆 Outstanding! Full marks!";
+    }
+    else if(percentage >=75){
+        feedback = "✅ Excellent understanding.";
+    }
+    else if(percentage >=50){
+        feedback = "👍 Good effort. Review a few key differences.";
+    }
+    else{
+        feedback = "📚 Revisit the topic and try again.";
+    }
+
+    document.getElementById("results").innerHTML =
+        `Score: ${score} / ${allCards.length} (${percentage}%)<br>${feedback}`;
+
+}
+
+function resetGame(){
+
+    const pool = document.getElementById("statementPool");
+
+    document.querySelectorAll('.card').forEach(card=>{
+        card.classList.remove('correct');
+        card.classList.remove('incorrect');
+        pool.appendChild(card);
+    });
+
+    document.getElementById("results").innerHTML = "";
+    document.getElementById("progressBar").style.width = "0%";
+
+    shuffleCards();
+}
+
+function updateProgress(){
+
+    const totalCards = document.querySelectorAll('.card').length;
+
+    const sortedCards =
+        document.getElementById('risc').children.length +
+        document.getElementById('cisc').children.length;
+
+    const percentage = (sortedCards / totalCards) * 100;
+
+    document.getElementById('progressBar').style.width =
+        percentage + "%";
+}
+
+function shuffleCards(){
+
+    const container = document.getElementById("statementPool");
+
+    for(let i=container.children.length; i>=0; i--){
+        container.appendChild(
+            container.children[Math.random() * i | 0]
+        );
+    }
+}
+
+</script>
+
+</body>
+</html>
