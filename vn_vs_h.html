@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RISC vs CISC Processor Challenge | Saint John Henry Newman Catholic School</title>
+
+<style>
+:root{
+    --sjhn-navy:#08264a;
+    --sjhn-red:#c62828;
+    --sjhn-gold:#d4af37;
+    --sjhn-light:#f5f7fa;
+    --sjhn-green:#2e7d32;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Segoe UI, Arial, sans-serif;
+    background:var(--sjhn-light);
+    color:#222;
+}
+
+header{
+    background:linear-gradient(135deg,var(--sjhn-navy),#123f78);
+    color:white;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.3);
+}
+
+.logo{
+    width:100px;
+    height:auto;
+    background:white;
+    border-radius:10px;
+    padding:5px;
+}
+
+.header-text h1{
+    margin:0;
+    font-size:2rem;
+}
+
+.header-text p{
+    margin:5px 0 0 0;
+    color:#f0f0f0;
+}
+
+.instructions{
+    max-width:1200px;
+    margin:20px auto;
+    background:white;
+    border-left:8px solid var(--sjhn-gold);
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+main{
+    max-width:1400px;
+    margin:auto;
+    padding:10px;
+}
+
+.game-container{
+    display:flex;
+    gap:15px;
+    align-items:flex-start;
+    flex-wrap:nowrap; /* prevents wrapping onto a new row */
+}
+
+.statements-panel{
+    width:300px;
+    flex-shrink:0;
+	background:white;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+
+
+.statement-list{
+    min-height:500px;
+}
+
+.category{
+    flex:1;
+    min-width:250px;
+    background:white;
+    border-radius:12px;
+    padding:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.category h2{
+    text-align:center;
+    margin-top:0;
+}
+
+.risc-title{
+    color:var(--sjhn-green);
+}
+
+.cisc-title{
+    color:var(--sjhn-red);
+}
+
+.drop-zone{
+    min-height:500px;
+    border:3px dashed #ccc;
+    border-radius:10px;
+    padding:10px;
+    transition:0.2s;
+}
+
+.drop-zone.drag-over{
+    background:#eef7ff;
+    border-color:var(--sjhn-navy);
+}
+
+.card{
+    background:white;
+    border-left:6px solid var(--sjhn-gold);
+    border-radius:8px;
+    margin:8px 0;
+    padding:12px;
+    cursor:grab;
+    user-select:none;
+    box-shadow:0 1px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover{
+    background:#fffdf5;
+}
+
+.correct{
+    background:#d4edda !important;
+    border-left-color:green !important;
+}
+
+.incorrect{
+    background:#f8d7da !important;
+    border-left-color:red !important;
+}
+
+.controls{
+    text-align:center;
+    margin:20px;
+}
+
+button{
+    background:var(--sjhn-navy);
+    color:white;
+    border:none;
+    padding:12px 22px;
+    margin:5px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:var(--sjhn-red);
+}
+
+#results{
+    text-align:center;
+    font-size:1.4rem;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.progress-container{
+    width:90%;
+    max-width:900px;
+    height:25px;
+    background:#ddd;
+    margin:20px auto;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,var(--sjhn-red),var(--sjhn-gold));
+    transition:0.5s;
+}
+
+.footer{
+    text-align:center;
+    padding:15px;
+    background:var(--sjhn-navy);
+    color:white;
+    margin-top:30px;
+}
+
+@media(max-width:900px){
+    .game-container{
+        flex-direction:column;
+    }
+
+    .statements-panel{
+        width:100%;
+    }
+}
+
+#school_logo{
+
+	width:150px;
+	height:150px;
+
+}
+
+.von-title{
+    color:#1976d2;
+}
+
+.harvard-title{
+    color:#c62828;
+}
+
+.both-title{
+    color:#6a1b9a;
+}
+
+.exam-practice{
+    max-width:1200px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.question-box,
+.answer-card,
+.feedback-box,
+.afl-box{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.question-box{
+    border-left:8px solid var(--sjhn-red);
+}
+
+.answer-card{
+    border-left:8px solid var(--sjhn-gold);
+}
+
+.reveal-box,
+.markscheme-box{
+    background:white;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:20px;
+}
+
+.reveal-box summary,
+.markscheme-box summary{
+    cursor:pointer;
+    font-weight:bold;
+    color:var(--sjhn-navy);
+}
+
+.feedback-box{
+    border-left:8px solid #2e7d32;
+}
+
+.afl-box{
+    border-left:8px solid #6a1b9a;
+}
+
+.ocr-example{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:20px;
+}
+
+.ocr-img{
+    max-width:500px;
+    width:100%;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.examiner-drag-task{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    margin:30px 0;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.banding-container{
+    display:grid;
+    grid-template-columns:350px 1fr;
+    gap:20px;
+}
+
+.answer-selection{
+    background:#f8f9fa;
+    padding:15px;
+    border-radius:8px;
+}
+
+.band-card{
+    background:white;
+    border-left:6px solid var(--sjhn-gold);
+    margin-bottom:15px;
+    padding:15px;
+    border-radius:8px;
+    cursor:grab;
+}
+
+.band-card h3{
+    margin-top:0;
+}
+
+.mark-bands{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:15px;
+}
+
+.band-zone{
+    min-height:220px;
+    border:3px dashed #bbb;
+    border-radius:10px;
+    padding:10px;
+}
+
+.band-zone.drag-over{
+    background:#eef7ff;
+}
+
+.band1-title{
+    color:#c62828;
+    text-align:center;
+}
+
+.band2-title{
+    color:#ef6c00;
+    text-align:center;
+}
+
+.band3-title{
+    color:#2e7d32;
+    text-align:center;
+}
+
+.correct-band{
+    background:#d4edda !important;
+}
+
+.incorrect-band{
+    background:#f8d7da !important;
+}
+
+#bandResults{
+    text-align:center;
+    margin-top:20px;
+    font-size:1.3rem;
+    font-weight:bold;
+}
+
+@media(max-width:1000px){
+
+    .banding-container{
+        grid-template-columns:1fr;
+    }
+
+    .mark-bands{
+        grid-template-columns:1fr;
+    }
+
+}
+
+#exemplar_answer{
+
+	width:400px;
+	height:350px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="jhn_logo.jpg" id="school_logo"/>
+
+    <div class="header-text">
+        <h1>RISC vs CISC Processor Challenge</h1>
+        <p>Saint John Henry Newman Catholic School</p>
+    </div>
+</header>
+
+<div class="instructions">
+<h3>Instructions</h3>
+<p>
+Drag each statement into either the <strong>Von Neumann</strong> or <strong>Harvard</strong> category.
+When you have sorted all the statements, click <strong>Check Answers</strong> to see your score.
+</p>
+</div>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<main>
+
+<div class="game-container">
+
+<div class="statements-panel">
+<h2>Statements to Sort</h2>
+
+<div class="statement-list" id="statementPool">
+
+<div class="card" draggable="true" data-answer="von">Stores data and instructions in the same memory unit</div>
+
+<div class="card" draggable="true" data-answer="harvard">Stores data and instructions in the separate memory units</div>
+
+<div class="card" draggable="true" data-answer="von">Single bus transfers instructions and data</div>
+<div class="card" draggable="true" data-answer="von">Uses one data bus and one address bus</div>
+
+<div class="card" draggable="true" data-answer="von">Can only read/write data or instructions, not both at the same time</div>
+
+<div class="card" draggable="true" data-answer="harvard">Less general purpose</div>
+<div class="card" draggable="true" data-answer="harvard">More complex motherboard required to deal with aditional memory</div>
+<div class="card" draggable="true" data-answer="harvard">Could run out of memory for data or instructions with memory being avaiable in other memory unit</div>
+<div class="card" draggable="true" data-answer="von">Prioritises simplicity over performance</div>
+
+<div class="card" draggable="true" data-answer="harvard">Prioritises performance over simplicity</div>
+
+<div class="card" draggable="true" data-answer="von">One memory system stores programs and variables</div>
+<div class="card" draggable="true" data-answer="von">Often associated with CISC processors</div>
+<div class="card" draggable="true" data-answer="von">Often uses variable length instructions</div>
+<div class="card" draggable="true" data-answer="harvard">Often associated with RISC processors</div>
+<div class="card" draggable="true" data-answer="harvard">Often uses fixed length instructions</div>
+<div class="card" draggable="true" data-answer="harvard">Separate memories can use different sizes and technologies</div>
+
+<div class="card" draggable="true" data-answer="von">A traffic jam can occur when instructions and data need the bus at the same time</div>
+
+<div class="card" draggable="true" data-answer="harvard">Allows greater throughput by using two buses</div>
+
+<div class="card" draggable="true" data-answer="von">Processor may need to wait to access memory</div>
+
+<div class="card" draggable="true" data-answer="harvard">Simultaneous memory access improves efficiency</div>
+
+<div class="card" draggable="true" data-answer="von">Most traditional desktop computers use this design</div>
+
+<div class="card" draggable="true" data-answer="harvard">Common in embedded systems and DSPs</div>
+<div class="card" draggable="true" data-answer="both">Contains a CPU</div>
+
+<div class="card" draggable="true" data-answer="both">Uses memory to store instructions</div>
+
+<div class="card" draggable="true" data-answer="both">Stores data in memory</div>
+
+<div class="card" draggable="true" data-answer="both">Can execute machine code instructions</div>
+
+<div class="card" draggable="true" data-answer="both">Used in modern computer systems</div>
+
+<div class="card" draggable="true" data-answer="both">Uses buses to transfer information</div>
+
+<div class="card" draggable="true" data-answer="both">Can perform arithmetic operations</div>
+
+<div class="card" draggable="true" data-answer="both">Requires a control unit and ALU</div>
+
+<div class="card" draggable="true" data-answer="both">Can run programs written in high-level languages</div>
+
+<div class="card" draggable="true" data-answer="both">Uses RAM during operation</div>
+
+<div class="card" draggable="true" data-answer="harvard">Separate buses for instructions and data</div>
+
+<div class="card" draggable="true" data-answer="von">Fetches instructions and data sequentially</div>
+<div class="card" draggable="true" data-answer="von">Allows for dynamic allocation of memory space between data and instructions</div>
+
+<div class="card" draggable="true" data-answer="harvard">Can fetch instructions and data simultaneously</div>
+
+<div class="card" draggable="true" data-answer="von">Affected by the Von Neumann Bottleneck</div>
+
+<div class="card" draggable="true" data-answer="harvard">Reduces the effects of the Von Neumann Bottleneck</div>
+
+<div class="card" draggable="true" data-answer="von">Simpler hardware design</div>
+
+<div class="card" draggable="true" data-answer="harvard">More complex hardware design</div>
+
+<div class="card" draggable="true" data-answer="von">Usually cheaper to implement</div>
+
+<div class="card" draggable="true" data-answer="harvard">Usually more expensive to implement</div>
+
+<div class="card" draggable="true" data-answer="von">Common in desktop and laptop computers</div>
+
+<div class="card" draggable="true" data-answer="harvard">Common in microcontrollers</div>
+
+<div class="card" draggable="true" data-answer="von">Used in general-purpose computer systems</div>
+
+<div class="card" draggable="true" data-answer="harvard">Used where speed is critical</div>
+
+<div class="card" draggable="true" data-answer="von">Instructions and data compete for the same bus</div>
+
+<div class="card" draggable="true" data-answer="harvard">Instructions and data travel on different buses</div>
+
+<div class="card" draggable="true" data-answer="von">Memory can be accessed only one operation at a time</div>
+
+<div class="card" draggable="true" data-answer="harvard">Parallel memory access is possible</div>
+
+<div class="card" draggable="true" data-answer="von">Processor may need to wait when fetching data</div>
+
+<div class="card" draggable="true" data-answer="harvard">Processor can fetch the next instruction while accessing data</div>
+
+<div class="card" draggable="true" data-answer="von">Processor may need to wait when fetching data</div>
+
+<div class="card" draggable="true" data-answer="harvard">Processor can fetch the next instruction while accessing data</div>
+
+
+</div>
+</div>
+
+<div class="category">
+<h2 class="risc-title">Von Neumann</h2>
+<div class="drop-zone" id="von"></div>
+</div>
+
+<div class="category">
+<h2 class="cisc-title">Harvard</h2>
+<div class="drop-zone" id="harvard"></div>
+</div>
+
+<div class="category">
+    <h2 class="both-title">Both</h2>
+    <div class="drop-zone" id="both"></div>
+</div>
+
+</div>
+
+<div class="controls">
+<button onclick="checkAnswers()">Check Answers</button>
+<button onclick="resetGame()">Reset Activity</button>
+</div>
+
+<div id="results"></div>
+
+</main>
+
+
+<section class="exam-practice">
+
+<h1>Further Activities</h1>
+
+<div class="question-box">
+
+<h2>9-Mark OCR Exam Question</h2>
+
+<p>
+Most modern computers are designed using Von Neumann Architecture.
+However, in some cases Harvard Architecture may be preferred.
+</p>
+
+<p><strong>Discuss the difference between Von Neumann Architecture and Harvard Architecture.</strong></p>
+
+<p>You should refer to:</p>
+
+<ul>
+    <li>the different approaches each architecture takes to storing instructions and data</li>
+    <li>the benefits of using a Von Neumann Architecture approach</li>
+    <li>the benefits of using a Harvard Architecture approach</li>
+</ul>
+
+<p><strong>(9 Marks)</strong></p>
+
+</div>
+
+<div class="banding-activity">
+
+<h2>Examiner Activity</h2>
+
+<p>
+Read the three responses below.
+One is a <strong>Band 1</strong> answer,
+one is a <strong>Band 2</strong> answer,
+and one is a <strong>Band 3</strong> answer.
+</p>
+
+<p>
+Can you identify which is which and decide what mark you would award?
+</p>
+
+</div>
+
+<section class="examiner-drag-task">
+
+<h2>Be the Examiner</h2>
+
+<p>
+Drag each answer into the mark band you think OCR would award.
+Then click <strong>Check Examiner Decisions</strong>.
+</p>
+
+<div class="answer-card">
+
+<h3>Answer A</h3>
+
+<p>
+Von Neumann architecture stores instructions and data in the same memory and uses a single bus system.
+This means that instructions and data cannot be transferred at the same time. This can create a bottleneck because the CPU has to wait for access to memory.
+</p>
+
+<p>
+Harvard architecture stores instructions and data in separate memories and uses separate buses for each. This allows instructions and data to be transferred simultaneously. As a result, the processor is usually faster because it can fetch an instruction while accessing data.
+</p>
+
+<p>
+An advantage of Von Neumann architecture is that it is simpler and cheaper to design. Because instructions and data share the same memory, memory space can be allocated dynamically. For example, a large computer game may require a lot of memory for instructions, whereas a video editing application may require more memory for data.
+</p>
+
+<p>
+An advantage of Harvard architecture is its performance. The separate memory and buses reduce delays caused by the Von Neumann Bottleneck. This makes it suitable for embedded systems, digital signal processors and microcontrollers where speed is important.
+</p>
+
+<p>
+Overall, although Harvard architecture offers greater performance because it allows parallel access to data and instructions, Von Neumann architecture is generally preferred for modern computers because it is less complex, cheaper to implement and uses memory more flexibly.
+</p>
+
+</div>
+
+<div class="answer-card">
+
+<h3>Answer B</h3>
+
+<p>
+Von Neumann and Harvard architectures store instructions and data differently. Von Neumann stores instructions and data together in the same memory, while Harvard uses separate memories.
+</p>
+
+<p>
+Harvard architecture can be faster because it can access instructions and data at the same time. Von Neumann computers may experience a bottleneck because they use one bus.
+</p>
+
+<p>
+Von Neumann architecture is cheaper and simpler to build. Harvard architecture is more complex because it needs additional buses and separate memory.
+</p>
+
+<p>
+Overall, Harvard architecture is good when speed is required, while Von Neumann architecture is useful because it is simpler and cheaper.
+</p>
+
+</div>
+
+<div class="answer-card">
+
+<h3>Answer C</h3>
+
+<p>
+Von Neumann and Harvard architecture are different types of computer architecture.
+</p>
+
+<p>
+Von Neumann uses memory to store data and programs. Harvard uses two memories. Harvard is faster than Von Neumann.
+</p>
+
+<p>
+Von Neumann is used in computers while Harvard is used in embedded systems. I think Harvard is better because it is quicker.
+</p>
+
+</div>
+
+
+<div class="banding-container">
+
+    <div class="answer-selection">
+
+        <div class="band-card"
+             draggable="true"
+             id="answerA"
+             data-answer="band3">
+
+            <h3>Answer A</h3>
+
+
+        </div>
+
+        <div class="band-card"
+             draggable="true"
+             id="answerB"
+             data-answer="band2">
+
+            <h3>Answer B</h3>
+   
+        </div>
+
+        <div class="band-card"
+             draggable="true"
+             id="answerC"
+             data-answer="band1">
+
+            <h3>Answer C</h3>
+
+        </div>
+
+    </div>
+
+    <div class="mark-bands">
+
+        <div class="band-zone-container">
+
+            <h3 class="band1-title">Band 1 (1-3 marks)</h3>
+
+            <div class="band-zone"
+                 id="band1">
+            </div>
+
+        </div>
+
+        <div class="band-zone-container">
+
+            <h3 class="band2-title">Band 2 (4-6 marks)</h3>
+
+            <div class="band-zone"
+                 id="band2">
+            </div>
+
+        </div>
+
+        <div class="band-zone-container">
+
+            <h3 class="band3-title">Band 3 (7-9 marks)</h3>
+
+            <div class="band-zone"
+                 id="band3">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="controls">
+
+    <button onclick="checkBands()">
+        Check Examiner Decisions
+    </button>
+
+    <button onclick="resetBands()">
+        Reset Activity
+    </button>
+
+</div>
+
+<div id="bandResults"></div>
+
+</section>
+
+
+<details class="reveal-box">
+<summary>Show Examiner Judgement</summary>
+
+<h3>Answer A</h3>
+
+<p>
+<strong>Band 3 (7-9 marks)</strong>
+</p>
+
+<ul>
+<li>Detailed explanation of memory and buses.</li>
+<li>Explains the bottleneck.</li>
+<li>Discusses advantages of both architectures.</li>
+<li>Applies knowledge using relevant examples.</li>
+<li>Provides a justified conclusion.</li>
+</ul>
+
+<p><strong>Likely Mark: 8-9</strong></p>
+
+<hr>
+
+<h3>Answer B</h3>
+
+<p>
+<strong>Band 2 (4-6 marks)</strong>
+</p>
+
+<ul>
+<li>Generally accurate.</li>
+<li>Reasonable comparison.</li>
+<li>Advantages identified.</li>
+<li>Limited development.</li>
+<li>Lacks detailed application.</li>
+</ul>
+
+<p><strong>Likely Mark: 5-6</strong></p>
+
+<hr>
+
+<h3>Answer C</h3>
+
+<p>
+<strong>Band 1 (1-3 marks)</strong>
+</p>
+
+<ul>
+<li>Basic knowledge only.</li>
+<li>Little detail.</li>
+<li>No discussion of buses.</li>
+<li>No discussion of memory flexibility.</li>
+<li>Conclusion is unsupported.</li>
+</ul>
+
+<p><strong>Likely Mark: 2-3</strong></p>
+
+</details>
+
+
+<h2>OCR Mark Scheme</h2>
+
+<details class="markscheme-box">
+<summary>Show Mark Scheme</summary>
+
+<h3>Mark Band 3 (7-9 Marks)</h3>
+
+<p>
+The candidate demonstrates a thorough knowledge and understanding of both Von Neumann and Harvard architectures.
+All detail is generally accurate and relevant.
+</p>
+
+<p>
+The candidate is able to apply their knowledge and understanding directly and consistently to the context provided.
+</p>
+
+<p>
+Evidence/examples will be explicitly relevant to the explanation.
+The candidate will come to a clear conclusion that must be justified by their comments.
+</p>
+
+<p>
+There is a well-developed line of reasoning which is clear and logically structured.
+</p>
+
+<hr>
+
+<h3>Mark Band 2 (4-6 Marks)</h3>
+
+<p>
+The candidate demonstrates reasonable knowledge and understanding.
+The material is generally accurate but at times underdeveloped.
+</p>
+
+<p>
+The candidate is able to apply knowledge to the context although opportunities may be missed.
+</p>
+
+<p>
+The candidate attempts a conclusion but it may not be fully justified.
+</p>
+
+<hr>
+
+<h3>Mark Band 1 (1-3 Marks)</h3>
+
+<p>
+The candidate demonstrates basic knowledge.
+The material is basic and may contain inaccuracies.
+</p>
+
+<p>
+Limited attempt to apply knowledge.
+Responses are often unsupported assertions.
+</p>
+
+<p>
+Information is basic and communicated in an unstructured way.
+</p>
+
+</details>
+
+
+<h2>Real OCR Candidate Response</h2>
+
+<p>
+The response below was awarded <strong>5 marks</strong>.
+Study it carefully and decide why it was placed in the middle band.
+</p>
+
+<div class="ocr-example">
+
+<img src="ocr_exemplar.png" id="exemplar_answer">
+
+
+</div>
+
+<div class="feedback-box">
+
+<h3>Examiner Feedback</h3>
+
+<p>
+This candidate response was given 5 marks.
+There are some valid points about both Von Neumann and Harvard Architecture,
+but the points made are not fully developed with limited application.
+This response was therefore given a mark within the mid-level band.
+</p>
+
+</div>
+
+
+<h2>Assessment for Learning</h2>
+
+<div class="afl-box">
+
+<ol>
+<li>Why was the response unable to reach Mark Band 3?</li>
+<li>Which technical terms were missing?</li>
+<li>How could the explanation of the bottleneck be improved?</li>
+<li>Was the conclusion fully justified?</li>
+<li>Identify two additional points that would increase the answer to 8-9 marks.</li>
+</ol>
+
+</div>
+
+</section>
+
+
+<div class="footer">
+Computer Science Department • Saint John Henry Newman Catholic School
+</div>
+
+<script>
+
+let draggedCard = null;
+
+const cards = document.querySelectorAll('.card');
+const zones = document.querySelectorAll('.drop-zone');
+
+shuffleCards();
+
+cards.forEach(card=>{
+
+    card.addEventListener('dragstart',()=>{
+        draggedCard = card;
+    });
+
+});
+
+zones.forEach(zone=>{
+
+    zone.addEventListener('dragover',(e)=>{
+        e.preventDefault();
+        zone.classList.add('drag-over');
+    });
+
+    zone.addEventListener('dragleave',()=>{
+        zone.classList.remove('drag-over');
+    });
+
+    zone.addEventListener('drop',(e)=>{
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        zone.appendChild(draggedCard);
+        updateProgress();
+    });
+
+});
+
+function checkAnswers(){
+
+    let score = 0;
+    const allCards = document.querySelectorAll('.card');
+
+    allCards.forEach(card=>{
+
+        card.classList.remove('correct');
+        card.classList.remove('incorrect');
+
+        const parentZone = card.parentElement.id;
+
+        if(parentZone === card.dataset.answer){
+            card.classList.add('correct');
+            score++;
+        } else {
+            card.classList.add('incorrect');
+        }
+
+    });
+
+    let percentage = Math.round((score/allCards.length)*100);
+
+    let feedback = "";
+
+    if(percentage === 100){
+        feedback = "🏆 Outstanding! Full marks!";
+    }
+    else if(percentage >=75){
+        feedback = "✅ Excellent understanding.";
+    }
+    else if(percentage >=50){
+        feedback = "👍 Good effort. Review a few key differences.";
+    }
+    else{
+        feedback = "📚 Revisit the topic and try again.";
+    }
+
+    document.getElementById("results").innerHTML =
+        `Score: ${score} / ${allCards.length} (${percentage}%)<br>${feedback}`;
+
+}
+
+function resetBands(){
+
+    const answerSelection =
+        document.querySelector(
+            '.answer-selection'
+        );
+
+    document
+        .querySelectorAll('.band-card')
+        .forEach(card=>{
+
+            card.classList.remove(
+                'correct-band',
+                'incorrect-band'
+            );
+
+            answerSelection.appendChild(card);
+
+        });
+
+    document
+        .getElementById('bandResults')
+        .innerHTML = '';
+
+}
+
+function resetGame(){
+
+    const pool = document.getElementById("statementPool");
+
+    document.querySelectorAll('.card').forEach(card=>{
+        card.classList.remove('correct');
+        card.classList.remove('incorrect');
+        pool.appendChild(card);
+    });
+
+    document.getElementById("results").innerHTML = "";
+    document.getElementById("progressBar").style.width = "0%";
+
+    shuffleCards();
+}
+
+function updateProgress(){
+
+    const totalCards = document.querySelectorAll('.card').length;
+
+    const sortedCards =
+        document.getElementById('risc').children.length +
+        document.getElementById('cisc').children.length;
+
+    const percentage = (sortedCards / totalCards) * 100;
+
+    document.getElementById('progressBar').style.width =
+        percentage + "%";
+}
+
+function shuffleCards(){
+
+    const container = document.getElementById("statementPool");
+
+    for(let i=container.children.length; i>=0; i--){
+        container.appendChild(
+            container.children[Math.random() * i | 0]
+        );
+    }
+}
+
+
+const bandCards =
+    document.querySelectorAll('.band-card');
+
+const bandZones =
+    document.querySelectorAll('.band-zone');
+
+let draggedBandCard = null;
+
+bandCards.forEach(card=>{
+
+    card.addEventListener('dragstart',()=>{
+
+        draggedBandCard = card;
+
+    });
+
+});
+
+bandZones.forEach(zone=>{
+
+    zone.addEventListener('dragover',(e)=>{
+
+        e.preventDefault();
+
+        zone.classList.add('drag-over');
+
+    });
+
+    zone.addEventListener('dragleave',()=>{
+
+        zone.classList.remove('drag-over');
+
+    });
+
+    zone.addEventListener('drop',(e)=>{
+
+        e.preventDefault();
+
+        zone.classList.remove('drag-over');
+
+        zone.appendChild(draggedBandCard);
+
+    });
+
+});
+
+function checkBands(){
+
+    let score = 0;
+
+    document
+        .querySelectorAll('.band-card')
+        .forEach(card=>{
+
+            card.classList.remove(
+                'correct-band',
+                'incorrect-band'
+            );
+
+            if(
+               card.parentElement.id ===
+               card.dataset.answer
+            ){
+
+                card.classList.add(
+                    'correct-band'
+                );
+
+                score++;
+
+            }
+            else{
+
+                card.classList.add(
+                    'incorrect-band'
+                );
+
+            }
+
+        });
+
+    document
+        .getElementById('bandResults')
+        .innerHTML =
+        `You identified ${score} out of 3 mark bands correctly.`;
+
+}
+
+
+</script>
+
+</body>
+</html>
