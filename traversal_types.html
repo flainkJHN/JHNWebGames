@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depth First vs Breadth First Traversal</title>
+
+<style>
+
+:root{
+    --navy:#08264a;
+    --gold:#d4af37;
+    --green:#2e7d32;
+    --red:#c62828;
+    --orange:#ef6c00;
+    --purple:#6a1b9a;
+    --light:#f4f6fa;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Segoe UI, Arial, sans-serif;
+    margin:0;
+    background:var(--light);
+}
+
+header{
+    background:var(--navy);
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+header h1{
+    margin:0;
+}
+
+section{
+    max-width:1400px;
+    margin:20px auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+h2{
+    color:var(--navy);
+}
+
+.game-container{
+    display:grid;
+    grid-template-columns:320px 1fr 1fr 1fr;
+    gap:15px;
+}
+
+.statement-pool{
+    background:#f8f9fb;
+    padding:15px;
+    border-radius:10px;
+}
+
+.category{
+    background:#fff;
+    border-radius:10px;
+    padding:10px;
+    box-shadow:0 1px 5px rgba(0,0,0,.1);
+}
+
+.drop-zone{
+    min-height:500px;
+    border:3px dashed #bbb;
+    border-radius:10px;
+    padding:10px;
+}
+
+.card{
+    background:white;
+    border-left:5px solid var(--gold);
+    padding:10px;
+    margin:8px 0;
+    border-radius:6px;
+    cursor:grab;
+}
+
+.card:hover{
+    background:#fffce8;
+}
+
+.drag-over{
+    background:#eef6ff;
+}
+
+.correct{
+    background:#d4edda !important;
+}
+
+.incorrect{
+    background:#f8d7da !important;
+}
+
+button{
+    background:var(--navy);
+    color:white;
+    border:none;
+    padding:12px 20px;
+    margin:10px 4px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:var(--red);
+}
+
+.result{
+    font-size:1.2em;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+pre{
+    font-size:20px;
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.banding{
+    display:grid;
+    grid-template-columns:320px 1fr 1fr 1fr;
+    gap:15px;
+}
+
+.answer-card{
+    background:white;
+    border-left:5px solid var(--gold);
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:6px;
+    cursor:grab;
+}
+
+.band-zone{
+    min-height:220px;
+    border:3px dashed #bbb;
+    border-radius:10px;
+    padding:10px;
+}
+
+.band1{
+    color:var(--red);
+}
+
+.band2{
+    color:var(--orange);
+}
+
+.band3{
+    color:var(--green);
+}
+
+details{
+    margin-top:15px;
+}
+
+@media(max-width:1200px){
+
+.game-container,
+.banding{
+grid-template-columns:1fr;
+}
+
+}
+
+.scenario{
+    margin-bottom:25px;
+}
+
+.scenario select{
+    width:300px;
+    padding:10px;
+    font-size:16px;
+}
+
+.correct-choice{
+    color:green;
+    font-weight:bold;
+}
+
+.incorrect-choice{
+    color:red;
+    font-weight:bold;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+<h1>Depth First vs Breadth First Traversal</h1>
+<p>A Level Computer Science Interactive Revision</p>
+</header>
+
+<section>
+
+<h2>Drag the statements into the correct category</h2>
+
+<div class="game-container">
+
+<div class="statement-pool" id="pool">
+
+<h3>Statements</h3>
+
+<div class="card" draggable="true" data-answer="dfs">Uses a stack data structure</div>
+<div class="card" draggable="true" data-answer="dfs">Can be implemented using recursion</div>
+<div class="card" draggable="true" data-answer="dfs">Explores a branch as deeply as possible before backtracking</div>
+<div class="card" draggable="true" data-answer="dfs">Typically uses less memory on wide trees</div>
+<div class="card" draggable="true" data-answer="dfs">Useful for maze solving</div>
+<div class="card" draggable="true" data-answer="dfs">Good when solutions are expected to be deep</div>
+<div class="card" draggable="true" data-answer="dfs">May miss a nearby solution while exploring a deep branch</div>
+<div class="card" draggable="true" data-answer="dfs">Backtracks when it reaches a dead end</div>
+<div class="card" draggable="true" data-answer="dfs">Does not guarantee the shortest path</div>
+
+<div class="card" draggable="true" data-answer="bfs">Uses a queue data structure</div>
+<div class="card" draggable="true" data-answer="bfs">Searches level by level</div>
+<div class="card" draggable="true" data-answer="bfs">Visits all siblings before moving deeper</div>
+<div class="card" draggable="true" data-answer="bfs">Finds the shortest path in an unweighted graph</div>
+<div class="card" draggable="true" data-answer="bfs">Good when solutions are likely to be near the root</div>
+<div class="card" draggable="true" data-answer="bfs">Often used in route-finding systems</div>
+<div class="card" draggable="true" data-answer="bfs">Requires more memory on very wide trees</div>
+<div class="card" draggable="true" data-answer="bfs">Guarantees the shallowest solution is found first</div>
+<div class="card" draggable="true" data-answer="bfs">Explores neighbouring nodes first</div>
+
+<div class="card" draggable="true" data-answer="both">Can traverse a tree</div>
+<div class="card" draggable="true" data-answer="both">Can traverse a graph</div>
+<div class="card" draggable="true" data-answer="both">Can search for a target value</div>
+<div class="card" draggable="true" data-answer="both">May need visited nodes to be tracked</div>
+<div class="card" draggable="true" data-answer="both">Can visit every node exactly once</div>
+<div class="card" draggable="true" data-answer="both">Can be implemented iteratively</div>
+<div class="card" draggable="true" data-answer="both">Can work on adjacency lists</div>
+<div class="card" draggable="true" data-answer="both">Can work on adjacency matrices</div>
+
+</div>
+
+<div class="category">
+<h3>Depth First Traversal</h3>
+<div class="drop-zone" id="dfs"></div>
+</div>
+
+<div class="category">
+<h3>Breadth First Traversal</h3>
+<div class="drop-zone" id="bfs"></div>
+</div>
+
+<div class="category">
+<h3>Both</h3>
+<div class="drop-zone" id="both"></div>
+</div>
+
+</div>
+
+<button onclick="checkMain()">Check Answers</button>
+<button onclick="resetMain()">Reset</button>
+
+<div class="result" id="mainResult"></div>
+
+</section>
+
+<section>
+
+<h2>Which Search Method is Best?</h2>
+
+<p>
+For each scenario:
+</p>
+
+<ol>
+<li>Read how DFS would approach the task.</li>
+<li>Read how BFS would approach the task.</li>
+<li>Decide which method would be most appropriate.</li>
+<li>Click <strong>Mark My Answers</strong> when finished.</li>
+</ol>
+
+<!-- QUESTION 1 -->
+
+<div class="scenario">
+
+<h3>1. Finding the Shortest Path in an Unweighted Graph</h3>
+
+<p><strong>DFS Approach:</strong></p>
+
+<p>
+Imagine a railway network:
+</p>
+
+<pre>
+London
+├── Cambridge
+│   ├── Norwich
+│   └── Ipswich
+└── Peterborough
+    └── York
+</pre>
+
+<p>
+A Depth First Search would choose one branch and continue exploring
+that branch as deeply as possible. It might travel:
+</p>
+
+<p>
+<strong>London → Cambridge → Norwich</strong>
+</p>
+
+<p>
+before checking any other stations. It could spend a long time
+exploring routes that do not contain York before eventually
+backtracking and trying another route.
+</p>
+
+<p><strong>BFS Approach:</strong></p>
+
+<p>
+A Breadth First Search would explore every station one stop away
+from London first:
+</p>
+
+<pre>
+Level 1:
+Cambridge
+Peterborough
+
+Level 2:
+Norwich
+Ipswich
+York
+</pre>
+
+<p>
+The first time York is discovered, BFS knows it has found the route
+with the fewest edges (stops).
+</p>
+
+<select id="q1">
+<option value="">Select the best approach...</option>
+<option value="dfs">Depth First Search</option>
+<option value="bfs">Breadth First Search</option>
+</select>
+
+<div id="q1feedback"></div>
+
+</div>
+
+<hr>
+
+<!-- QUESTION 2 -->
+
+<div class="scenario">
+
+<h3>2. Solving a Maze</h3>
+
+<p><strong>DFS Approach:</strong></p>
+
+<p>
+Imagine entering a maze and always choosing one path until you
+cannot continue.
+</p>
+
+<p>
+DFS would follow a route until it reaches:
+</p>
+
+<ul>
+<li>The exit</li>
+<li>A dead end</li>
+</ul>
+
+<p>
+If it reaches a dead end, it backtracks to the previous junction
+and tries another path.
+</p>
+
+<pre>
+Start
+  ↓
+  ↓
+Junction
+  ↓
+  ↓
+Dead End
+</pre>
+
+<p>
+This mirrors how many humans naturally solve mazes.
+</p>
+
+<p><strong>BFS Approach:</strong></p>
+
+<p>
+BFS would investigate every possible route one step from the start,
+then every route two steps away, then every route three steps away.
+</p>
+
+<p>
+This guarantees the shortest route through the maze but potentially
+requires storing thousands of positions simultaneously.
+</p>
+
+<select id="q2">
+<option value="">Select the best approach...</option>
+<option value="dfs">Depth First Search</option>
+<option value="bfs">Breadth First Search</option>
+</select>
+
+<div id="q2feedback"></div>
+
+</div>
+
+<hr>
+
+<!-- QUESTION 3 -->
+
+<div class="scenario">
+
+<h3>3. Searching a Family Tree by Generation</h3>
+
+<p><strong>DFS Approach:</strong></p>
+
+<p>
+Suppose you are researching your ancestors.
+</p>
+
+<pre>
+You
+└─ Parent
+   └─ Grandparent
+      └─ Great Grandparent
+</pre>
+
+<p>
+DFS would follow one side of the family tree as deeply as possible.
+It might investigate your father's family for five generations before
+returning and beginning to examine your mother's side.
+</p>
+
+<p><strong>BFS Approach:</strong></p>
+
+<p>
+BFS naturally searches generation by generation.
+</p>
+
+<pre>
+Generation 1:
+Parents
+
+Generation 2:
+Grandparents
+
+Generation 3:
+Great Grandparents
+</pre>
+
+<p>
+This makes BFS ideal if your goal is to discover everyone at a
+particular generation level.
+</p>
+
+<select id="q3">
+<option value="">Select the best approach...</option>
+<option value="dfs">Depth First Search</option>
+<option value="bfs">Breadth First Search</option>
+</select>
+
+<div id="q3feedback"></div>
+
+</div>
+
+<hr>
+
+<!-- QUESTION 4 -->
+
+<div class="scenario">
+
+<h3>4. Exploring Possible Moves in a Puzzle Game</h3>
+
+<p><strong>DFS Approach:</strong></p>
+
+<p>
+Imagine a puzzle where each move creates several new possibilities.
+</p>
+
+<p>
+DFS may try:
+</p>
+
+<pre>
+Move A
+ → Move C
+   → Move H
+     → Move R
+</pre>
+
+<p>
+It continues exploring a single sequence of moves until it finds
+a solution or reaches a dead end.
+</p>
+
+<p>
+Because only the current path needs to be remembered, memory usage
+remains relatively low.
+</p>
+
+<p><strong>BFS Approach:</strong></p>
+
+<p>
+BFS would store every move available at each level:
+</p>
+
+<pre>
+Depth 1:
+A B C
+
+Depth 2:
+D E F G H I J K
+
+Depth 3:
+Many more possibilities...
+</pre>
+
+<p>
+While BFS guarantees the shortest solution, memory requirements
+can become enormous.
+</p>
+
+<select id="q4">
+<option value="">Select the best approach...</option>
+<option value="dfs">Depth First Search</option>
+<option value="bfs">Breadth First Search</option>
+</select>
+
+<div id="q4feedback"></div>
+
+</div>
+
+<hr>
+
+<!-- QUESTION 5 -->
+
+<div class="scenario">
+
+<h3>5. Social Media Friend Suggestions</h3>
+
+<p><strong>DFS Approach:</strong></p>
+
+<p>
+Suppose your direct friends are:
+</p>
+
+<pre>
+You
+├─ Alice
+├─ Bob
+└─ Charlie
+</pre>
+
+<p>
+DFS might investigate:
+</p>
+
+<pre>
+Alice
+ → Dave
+   → Emma
+     → Fred
+</pre>
+
+<p>
+before even considering Bob or Charlie.
+</p>
+
+<p>
+This means suggestions may be based on quite distant connections.
+</p>
+
+<p><strong>BFS Approach:</strong></p>
+
+<p>
+BFS naturally explores:
+</p>
+
+<pre>
+Level 1:
+Friends
+
+Level 2:
+Friends of Friends
+
+Level 3:
+Friends of Friends of Friends
+</pre>
+
+<p>
+Because people are more likely to know friends-of-friends than
+connections several layers away, BFS usually produces better
+recommendations.
+</p>
+
+<select id="q5">
+<option value="">Select the best approach...</option>
+<option value="dfs">Depth First Search</option>
+<option value="bfs">Breadth First Search</option>
+</select>
+
+<div id="q5feedback"></div>
+
+</div>
+
+<hr>
+
+<!-- QUESTION 6 -->
+
+<div class="scenario">
+
+<h3>6. Finding a File Deep Inside a Folder Structure</h3>
+
+<p><strong>DFS Approach:</strong></p>
+
+<p>
+Suppose your computer contains:
+</p>
+
+<pre>
+Documents
+├─ School
+│  ├─ OCR
+│  │  └─ Revision.docx
+│  └─ Resources
+└─ Photos
+</pre>
+
+<p>
+DFS would immediately explore:
+</p>
+
+<pre>
+Documents
+ → School
+   → OCR
+     → Revision.docx
+</pre>
+
+<p>
+before returning to investigate other folders.
+</p>
+
+<p>
+If files are usually buried deep within nested folders, this is
+often efficient.
+</p>
+
+<p><strong>BFS Approach:</strong></p>
+
+<p>
+BFS would first search:
+</p>
+
+<pre>
+Documents
+├─ School
+└─ Photos
+</pre>
+
+<p>
+Then all folders inside those locations before going any deeper.
+It may spend a lot of time checking folders that do not contain the
+target file.
+</p>
+
+<select id="q6">
+<option value="">Select the best approach...</option>
+<option value="dfs">Depth First Search</option>
+<option value="bfs">Breadth First Search</option>
+</select>
+
+<div id="q6feedback"></div>
+
+</div>
+
+<button onclick="markScenarios()">
+Mark My Answers
+</button>
+
+<div class="result" id="scenarioResult"></div>
+
+</section>
+
+
+
+
+
+<script>
+
+let dragged = null;
+
+document.querySelectorAll('.card,.answer-card').forEach(card=>{
+
+card.addEventListener('dragstart',()=>{
+dragged=card;
+});
+
+});
+
+document.querySelectorAll('.drop-zone,.band-zone').forEach(zone=>{
+
+zone.addEventListener('dragover',e=>{
+e.preventDefault();
+zone.classList.add('drag-over');
+});
+
+zone.addEventListener('dragleave',()=>{
+zone.classList.remove('drag-over');
+});
+
+zone.addEventListener('drop',e=>{
+e.preventDefault();
+zone.classList.remove('drag-over');
+zone.appendChild(dragged);
+});
+
+});
+
+function checkMain(){
+
+let score=0;
+let cards=document.querySelectorAll('.card');
+
+cards.forEach(card=>{
+
+card.classList.remove('correct','incorrect');
+
+if(card.parentElement.id===card.dataset.answer){
+
+card.classList.add('correct');
+score++;
+
+}else{
+
+card.classList.add('incorrect');
+
+}
+
+});
+
+document.getElementById('mainResult').innerHTML=
+`Score: ${score} / ${cards.length}`;
+
+}
+
+function resetMain(){
+
+const pool=document.getElementById('pool');
+
+document.querySelectorAll('.card').forEach(card=>{
+
+card.classList.remove('correct','incorrect');
+pool.appendChild(card);
+
+});
+
+document.getElementById('mainResult').innerHTML='';
+
+}
+
+function normalise(text){
+return text.toUpperCase().replace(/,/g,' ').replace(/\s+/g,' ').trim();
+}
+
+
+
+function checkBands(){
+
+let score=0;
+
+document.querySelectorAll('.answer-card').forEach(card=>{
+
+card.classList.remove('correct','incorrect');
+
+if(card.parentElement.id===card.dataset.correct){
+
+score++;
+card.classList.add('correct');
+
+}else{
+
+card.classList.add('incorrect');
+
+}
+
+});
+
+document.getElementById('bandResult').innerHTML=
+`You correctly identified ${score} out of 3 mark bands.`;
+
+}
+
+function markScenarios(){
+
+const answers = {
+
+q1:"bfs",
+q2:"dfs",
+q3:"bfs",
+q4:"dfs",
+q5:"bfs",
+q6:"dfs"
+
+};
+
+const explanations = {
+
+q1:"BFS guarantees the shortest path in an unweighted graph.",
+q2:"DFS is often preferred because it can explore one route at a time and backtrack when necessary.",
+q3:"BFS naturally searches generation-by-generation.",
+q4:"DFS is often used because it requires less memory when exploring large search spaces.",
+q5:"BFS explores nearby connections first which is ideal for friend recommendations.",
+q6:"DFS efficiently follows a folder path to its maximum depth before backtracking."
+
+};
+
+let score = 0;
+
+for(let question in answers){
+
+const selected =
+document.getElementById(question).value;
+
+const feedback =
+document.getElementById(question + "feedback");
+
+if(selected === answers[question]){
+
+score++;
+
+feedback.innerHTML =
+"✅ Correct. " + explanations[question];
+
+feedback.className = "correct-choice";
+
+}
+else{
+
+feedback.innerHTML =
+"❌ Incorrect. " + explanations[question];
+
+feedback.className = "incorrect-choice";
+
+}
+
+}
+
+document.getElementById("scenarioResult")
+.innerHTML =
+`Score: ${score} / 6`;
+
+}
+
+</script>
+
+</body>
+</html>
